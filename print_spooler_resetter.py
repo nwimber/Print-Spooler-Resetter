@@ -1,11 +1,11 @@
-# Print Spooler Resetter v0.1 
+# Print Spooler Resetter v0.1 4/6/23
 # Requires pypsrp and requests-kerberos
 
 from pypsrp.client import Client
 from pypsrp.powershell import PowerShell, RunspacePool
 from pypsrp.wsman import WSMan
 
-# Function to connect to the remote Windows Server using PowerShell and Kerberos
+# Connect to the remote Windows Server using PowerShell and Kerberos, currently testing without ssl
 def connect_to_server(hostname, username, password):
     client = Client(
         hostname,
@@ -20,12 +20,12 @@ def connect_to_server(hostname, username, password):
     return client
 
 
-# Function to stop the Print Spooler service
+# Stop the print spooler service
 def stop_print_spooler_service(client):
     output = client.execute_ps("Stop-Service -Name Spooler")
     print(output)
 
-# Function to delete the contents of the Printers directory
+# Delete the contents of the print spooler directory
 def delete_printer_directory_contents(client):
     ps_script = """
     $printerDirectory = "C:\Windows\System32\spool\PRINTERS"
@@ -34,7 +34,7 @@ def delete_printer_directory_contents(client):
     output = client.execute_ps(ps_script)
     print(output)
 
-# Function to restart the Print Spooler service
+# Start the print spooler service
 def restart_print_spooler_service(client):
     output = client.execute_ps("Start-Service -Name Spooler")
     print(output)
@@ -52,13 +52,13 @@ def main():
     # Connect to the remote Windows Server
     client = connect_to_server(hostname, username, password)
 
-    # Stop the Print Spooler service
+    # Stop the print spooler service
     stop_print_spooler_service(client)
 
-    # Delete the contents of the Printers directory
+    # Delete the contents of the print spooler directory
     delete_printer_directory_contents(client)
 
-    # Restart the Print Spooler service
+    # Restart the print spooler service
     restart_print_spooler_service(client)
 
 if __name__ == "__main__":
